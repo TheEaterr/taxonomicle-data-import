@@ -1,3 +1,10 @@
 target
 results
 .vscode
+bin
+include
+lib
+lib64
+pyvenv.cfg
+dumps
+*.ipynb

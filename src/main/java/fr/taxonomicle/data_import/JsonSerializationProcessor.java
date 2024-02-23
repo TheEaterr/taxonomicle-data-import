@@ -50,7 +50,7 @@ import org.wikidata.wdtk.dumpfiles.EntityTimerProcessor;
  */
 public class JsonSerializationProcessor extends EntityTimerProcessor {
 
-	static final String OUTPUT_FILE_NAME = "json-serialization-taxon-en.json.gz";
+	static final String OUTPUT_FILE_NAME = "json-all-taxon.json.gz";
 
 	final JsonSerializer jsonSerializer;
 
@@ -59,6 +59,8 @@ public class JsonSerializationProcessor extends EntityTimerProcessor {
 	 * re-serialization in JSON.
 	 */
 	final DatamodelFilter datamodelFilter;
+
+	private int siteLinkCount;
 
 	/**
 	 * Runs the example program.
@@ -85,6 +87,7 @@ public class JsonSerializationProcessor extends EntityTimerProcessor {
 	 */
 	public JsonSerializationProcessor() throws IOException {
 		super(0);
+		this.siteLinkCount = 0;
 		//Configuration of the filter
 		DocumentDataFilter documentDataFilter = new DocumentDataFilter();
 		// Only copy English labels, descriptions, and aliases:
@@ -120,8 +123,22 @@ public class JsonSerializationProcessor extends EntityTimerProcessor {
 	public void processItemDocument(ItemDocument itemDocument) {
 		super.processItemDocument(itemDocument);
 		if (includeDocument(itemDocument)) {
-			// to use the documentDataFilter
-			this.jsonSerializer.processItemDocument(this.datamodelFilter.filter(itemDocument));
+			ItemDocument filterItemDocument = this.datamodelFilter.filter(itemDocument);
+			Set<String> statementsToRemove = new HashSet<String>();
+			for(StatementGroup statementGroup : filterItemDocument.getStatementGroups()) {
+				String propertyId = statementGroup.getProperty().getId();
+				if (propertyId.equals("P1843")) {
+					for (Statement statement : statementGroup.getStatements()) {
+						if (statement.getValue() != null && !((MonolingualTextValue) statement.getValue()).getLanguageCode().equals("en")) {
+							statementsToRemove.add(statement.getStatementId());
+						}
+					}
+				}
+			}
+			if (!filterItemDocument.getSiteLinks().isEmpty()) {
+				this.siteLinkCount++;
+			}
+			this.jsonSerializer.processItemDocument(filterItemDocument.withoutStatementIds(statementsToRemove));
 			// this.jsonSerializer.processItemDocument(itemDocument);
 		}
 	}
@@ -157,6 +174,7 @@ public class JsonSerializationProcessor extends EntityTimerProcessor {
 		System.out.println("Serialized "
 				+ this.jsonSerializer.getEntityDocumentCount()
 				+ " item documents to JSON file " + OUTPUT_FILE_NAME + ".");
+		System.out.println("Number of site links : " + this.siteLinkCount);
 		this.jsonSerializer.close();
 	}
 
@@ -169,21 +187,27 @@ public class JsonSerializationProcessor extends EntityTimerProcessor {
 	 * @return true if the document should be serialized
 	 */
 	private boolean includeDocument(ItemDocument itemDocument) {
+		boolean hasParent = false;
+		boolean isTaxon = false;
 		for (StatementGroup sg : itemDocument.getStatementGroups()) {
-			// P31 is instance of
-			if (!"P31".equals(sg.getProperty().getId())) {
+			// return true;
+			if ("P171".equals(sg.getProperty().getId())) {
+				hasParent = true;
+			}
+			if (!("P31".equals(sg.getProperty().getId()))) {
 				continue;
 			}
 			for (Statement s : sg) {
 				if (s.getMainSnak() instanceof ValueSnak) {
 					Value v = s.getValue();
 					if (v instanceof ItemIdValue
-							&& "Q16521".equals(((ItemIdValue) v).getId())) {
-						return true;
+							&& ("Q16521".equals(((ItemIdValue) v).getId()) || "Q713623".equals(((ItemIdValue) v).getId()))) {
+						isTaxon = true;
+						break;
 					}
 				}
 			}
 		}
-		return false;
+		return hasParent && isTaxon;
 	}
 }

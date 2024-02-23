@@ -40,7 +40,7 @@ public class LocalDumpFileExample {
 	/**
 	 * Path to the dump that should be processed
 	 */
-	private final static String DUMP_FILE = "./results/json-serialization-taxon-all.json.gz";
+	private final static String DUMP_FILE = "./dumps/latest-all.json.gz";
 
 	public static void main(String[] args) throws IOException {
 		ExampleHelpers.configureLogging();
