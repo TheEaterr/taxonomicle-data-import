@@ -43,10 +43,10 @@ def parse_large_json_file(file_path):
 
         # Close progress bar after completion
         progress_bar.close()
-        print(G.number_of_nodes())
-        animalia_tree = nx.bfs_tree(G, "Q729", reverse=False, depth_limit=None, sort_neighbors=None)
-        print(animalia_tree.number_of_nodes())
+        print("Making animalia tree...")
+        return nx.bfs_tree(G, "Q729", reverse=False, depth_limit=None, sort_neighbors=None)
 
 if __name__ == "__main__":
     file_path = 'results/json-all-taxon.json'
-    parse_large_json_file(file_path)
+    animalia_tree = parse_large_json_file(file_path)
+    nx.write_graphml_lxml(animalia_tree, "results/animalia_tree.graphml")
