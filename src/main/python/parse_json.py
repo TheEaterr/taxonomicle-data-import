@@ -88,7 +88,15 @@ def parse_large_json_file(file_path):
             # Example: print(json_data)
             # print(json_data)
             parents = json_data["claims"]["P171"]
+            has_preferred_parent = False
             for parent in parents:
+                if parent.get("rank") == "preferred":
+                    has_preferred_parent = True
+            for parent in parents:
+                if parent.get("rank") == "deprecated":
+                    continue
+                if has_preferred_parent and parent.get("rank") != "preferred":
+                    continue
                 parent_snak = parent["mainsnak"]
                 if (parent_snak.get("datavalue") == None):
                     continue
@@ -102,11 +110,16 @@ def parse_large_json_file(file_path):
 
             rank_claims = json_data["claims"].get("P105")
             ranks = []
+            preferred_rank = None
             if rank_claims:
                 for rank_prop in rank_claims:
+                    if rank_prop.get("rank") == "deprecated":
+                        continue
                     rank_snak = rank_prop["mainsnak"]
                     if (rank_snak.get("datavalue") == None):
                         continue
+                    if rank_prop.get("rank") == "preferred":
+                        preferred_rank = TAXONS_TO_KEEP.get(rank_snak["datavalue"]["value"]["id"])
                     rank_id = rank_snak["datavalue"]["value"]["id"]
                     rank = TAXONS_TO_KEEP.get(rank_id)
                     if rank:
@@ -115,7 +128,10 @@ def parse_large_json_file(file_path):
                     mul_rank += 1
                     DOUBLE_TAXONS.append({"id": json_data["id"], "ranks": ranks})
                 if ranks:
-                    filtered_data["rank"] = ranks[0]
+                    if preferred_rank:
+                        filtered_data["rank"] = preferred_rank
+                    else:
+                        filtered_data["rank"] = ranks[0]
             data[json_data["id"]] = filtered_data
 
             # Update progress bar
@@ -148,6 +164,7 @@ def parse_large_json_file(file_path):
         animalia_tree.nodes["Q822890"].pop("rank")
         animalia_tree.nodes["Q3111386"].pop("rank")
         animalia_tree.nodes["Q21224524"].pop("rank")
+        animalia_tree.nodes["Q343460"].pop("rank")
         skip_taxons.append("Q822890")
         # animalia_tree.nodes["Q26214"]["rank"] = "infraphylum"
         # skip_taxons.append("Q26214")
