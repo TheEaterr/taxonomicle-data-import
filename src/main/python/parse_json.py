@@ -16,6 +16,7 @@ TAXONS_TO_KEEP = {
     "Q2752679": "subkingdom",
     "Q2136103": "superfamily",
     "Q2111790": "superphylum",
+    "Q2361851": "infraphylum",
     "Q7432": "species",
     "Q68947": "subspecies",
     "Q34740": "genus",
@@ -27,6 +28,34 @@ TAXONS_TO_KEEP = {
     "Q6311258": "pavorder",
     "Q36732": "kindgom",
     "Q5867959": "suborder"
+}
+
+TAXON_RANKS = {
+    "kindgom": 10,
+    "subkingdom": 11,
+    "infrakingdon": 12,
+    "superphylum": 19,
+    "phylum": 20,
+    "subphylum": 21,
+    "infraphylum": 22,
+    "superclass": 29,
+    "class": 30,
+    "subclass": 31,
+    "infraclass": 32,
+    "superorder": 39,
+    "order": 40,
+    "suborder": 41,
+    "infraorder": 42,
+    "pavorder": 43,
+    "superfamily": 49,
+    "family": 50,
+    "subfamily": 51,
+    "tribe": 60,
+    "subtribe": 61,
+    "genus": 70,
+    "subgenus": 71,
+    "species": 80,
+    "subspecies": 81,
 }
 
 DOUBLE_TAXONS = []
@@ -84,7 +113,7 @@ def parse_large_json_file(file_path):
                         ranks.append(rank)
                 if len(ranks) > 1:
                     mul_rank += 1
-                    DOUBLE_TAXONS.append(json_data["id"])
+                    DOUBLE_TAXONS.append({"id": json_data["id"], "ranks": ranks})
                 if ranks:
                     filtered_data["rank"] = ranks[0]
             data[json_data["id"]] = filtered_data
@@ -103,13 +132,70 @@ def parse_large_json_file(file_path):
         print(animalia_tree.nodes["Q729"])
         DOUBLE_TAXONS_ANIMALIA = []
         DOUBLE_TAXONS_ANIMALIA_WIKI = []
-        for taxon in DOUBLE_TAXONS:
+        for taxon_info in DOUBLE_TAXONS:
+            taxon = taxon_info["id"]
             if animalia_tree.has_node(taxon):
                 DOUBLE_TAXONS_ANIMALIA.append(taxon)
                 if animalia_tree.nodes[taxon]["site_link"]:
                     DOUBLE_TAXONS_ANIMALIA_WIKI.append(taxon)
         print("DOUBLE_TAXONS_ANIMALIA", len(DOUBLE_TAXONS_ANIMALIA), DOUBLE_TAXONS_ANIMALIA)
         print("DOUBLE_TAXONS_ANIMALIA_WIKI", len(DOUBLE_TAXONS_ANIMALIA_WIKI), DOUBLE_TAXONS_ANIMALIA_WIKI)
+
+        # delete problematic taxons (by removing their rank)
+        skip_taxons = []
+        animalia_tree.nodes["Q3748423"].pop("rank")
+        animalia_tree.nodes["Q4000124"].pop("rank")
+        animalia_tree.nodes["Q822890"].pop("rank")
+        animalia_tree.nodes["Q3111386"].pop("rank")
+        animalia_tree.nodes["Q21224524"].pop("rank")
+        skip_taxons.append("Q822890")
+        # animalia_tree.nodes["Q26214"]["rank"] = "infraphylum"
+        # skip_taxons.append("Q26214")
+
+        number_problem = 0
+        for taxon_info in DOUBLE_TAXONS:    
+            taxon = taxon_info["id"]
+            ranks = taxon_info["ranks"]
+            if animalia_tree.has_node(taxon) and taxon not in skip_taxons:
+                sucessors = list(animalia_tree.successors(taxon))
+                predecessor_rank = animalia_tree.nodes[list(animalia_tree.predecessors(taxon))[0]].get("rank")
+                pred_filter_ranks = []
+                for rank in ranks:
+                    if predecessor_rank is None or TAXON_RANKS[rank] > TAXON_RANKS[predecessor_rank]:
+                        pred_filter_ranks.append(rank)
+                    else:
+                        number_problem += 1
+                all_filter_ranks = []
+                problem_succs = []
+                for rank in pred_filter_ranks:
+                    problem = False
+                    for succ in sucessors:
+                        if not animalia_tree.nodes[succ]["site_link"]:
+                            continue
+                        succ_rank = animalia_tree.nodes[succ].get("rank")
+                        if succ_rank is not None and TAXON_RANKS[rank] >= TAXON_RANKS[succ_rank]:
+                            problem = True
+                            problem_succs.append(succ)
+                    if problem:
+                        number_problem += 1
+                    else:
+                        all_filter_ranks.append(rank)
+                if len(all_filter_ranks) == 0:
+                    print("Big problem with ", taxon, " having ", list(animalia_tree.predecessors(taxon))[0], " and ", problem_succs)
+                    animalia_tree.nodes[taxon].pop("rank")
+                else:
+                    min_diff = 100
+                    min_value = None
+                    for rank in all_filter_ranks:
+                        taxon_rank = TAXON_RANKS[rank]
+                        diff = abs((taxon_rank // 10) * taxon_rank - taxon_rank)
+                        if diff < min_diff:
+                            min_diff = diff
+                            min_value = rank
+                    animalia_tree.nodes[taxon]["rank"] = rank
+                    # print("Chose ", rank, " for taxon ", taxon)
+        print(number_problem)
+
         return animalia_tree
 
 if __name__ == "__main__":
