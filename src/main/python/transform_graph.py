@@ -1,5 +1,6 @@
 import networkx as nx
 from time import time
+import matplotlib.pyplot as plt
 
 TAXONS_TO_KEEP = {
     "Q38348": "phylum",
@@ -56,6 +57,80 @@ TAXON_RANKS = {
     "species": 80,
     "subspecies": 81,
 }
+
+def getAndPrintStats(tree: nx.DiGraph):
+    print(tree)
+    total_site_links = 0
+    site_links_per_rank = {}
+    count_per_rank = {}
+    prop_ranks = {}
+    no_rank = 0
+    problems = 0
+    for rank_id in TAXONS_TO_KEEP:
+        rank = TAXONS_TO_KEEP[rank_id]
+        site_links_per_rank[rank] = 0
+        count_per_rank[rank] = 0
+        prop_ranks[rank] = 0
+
+
+    for node in tree.nodes():
+        node_data = tree.nodes[node]
+        if node_data["site_link"]:
+            total_site_links += 1
+        if node_data.get("rank"):
+            count_per_rank[node_data["rank"]] += 1
+            if node_data["site_link"]:
+                site_links_per_rank[node_data["rank"]] += 1
+            
+            predecessors = list(tree.predecessors(node))
+            if len(predecessors) > 0:
+                predecessor = predecessors[0]
+                predecessor_rank = tree.nodes[predecessor].get("rank")
+                predecessor_site_link = tree.nodes[predecessor].get("site_link")
+                if node_data["site_link"] and predecessor_site_link and predecessor_rank is not None and TAXON_RANKS[node_data["rank"]] <= TAXON_RANKS[predecessor_rank]:
+                    print("Problem of hierachy between", predecessor + " (" + predecessor_rank + ")", " and ", node + " (" + node_data["rank"] + ")")
+                    problems += 1
+        else:
+            no_rank += 1
+    
+    print(problems)
+
+    def hasSiteLink(node):
+        return tree.nodes[node].get("site_link") == True or not tree.nodes[node].get("rank") or tree.nodes[node].get("rank") == "subgenus"
+
+    only_wiki = nx.subgraph_view(tree, filter_node=hasSiteLink)
+    only_wiki_tree = nx.bfs_tree(only_wiki, "Q729", reverse=False, depth_limit=None, sort_neighbors=None)
+    print("Animalia tree of connected wiki pages: ", only_wiki_tree)
+    print("Number of wiki pages :", total_site_links)
+    print("Wikipage per taxon :", site_links_per_rank)
+    print("Total count per taxon :", count_per_rank)
+    for rank_id in TAXONS_TO_KEEP:
+        rank = TAXONS_TO_KEEP[rank_id]
+        if rank != "subspecies":
+            prop_ranks[rank] = site_links_per_rank[rank] / count_per_rank[rank]
+    print("Wikipage proportion per taxon :", prop_ranks)
+    print("Taxons with no rank :", no_rank)
+
+
+def removeAndReconnect(tree: nx.DiGraph):
+    pruned_tree = tree.copy()
+    print(pruned_tree)
+    # Remove nodes with no rank
+
+    to_remove = []
+    nodes = list(pruned_tree)[:]
+    for node in nodes:
+        node_data = pruned_tree.nodes[node]
+        if node_data.get("rank") is None or not node_data["site_link"]:
+            successors = list(pruned_tree.successors(node))
+            predecessors = list(pruned_tree.predecessors(node))
+            if len(predecessors) > 0:
+                predecessor = predecessors[0]
+                for successor in successors:
+                    pruned_tree.add_edge(predecessor, successor)
+            pruned_tree.remove_node(node)
+
+    return pruned_tree
 
 if __name__ == "__main__":
     t = time()
@@ -114,53 +189,9 @@ if __name__ == "__main__":
 
     animalia_tree = nx.subgraph_view(full_animalia_tree, filter_node=isNotSubspecies)
 
-    total_site_links = 0
-    site_links_per_rank = {}
-    count_per_rank = {}
-    prop_ranks = {}
-    no_rank = 0
-    problems = 0
-    for rank_id in TAXONS_TO_KEEP:
-        rank = TAXONS_TO_KEEP[rank_id]
-        site_links_per_rank[rank] = 0
-        count_per_rank[rank] = 0
-        prop_ranks[rank] = 0
-
-
-    for node in animalia_tree.nodes():
-        node_data = animalia_tree.nodes[node]
-        if node_data["site_link"]:
-            total_site_links += 1
-        if node_data.get("rank"):
-            count_per_rank[node_data["rank"]] += 1
-            if node_data["site_link"]:
-                site_links_per_rank[node_data["rank"]] += 1
-            
-            predecessors = list(animalia_tree.predecessors(node))
-            if len(predecessors) > 0:
-                predecessor = predecessors[0]
-                predecessor_rank = animalia_tree.nodes[predecessor].get("rank")
-                predecessor_site_link = animalia_tree.nodes[predecessor].get("site_link")
-                if node_data["site_link"] and predecessor_site_link and predecessor_rank is not None and TAXON_RANKS[node_data["rank"]] <= TAXON_RANKS[predecessor_rank]:
-                    print("Problem of hierachy between", predecessor + " (" + predecessor_rank + ")", " and ", node + " (" + node_data["rank"] + ")")
-                    problems += 1
-        else:
-            no_rank += 1
-    
-    print(problems)
-
-    def hasSiteLink(node):
-        return animalia_tree.nodes[node].get("site_link") == True or not animalia_tree.nodes[node].get("rank") or animalia_tree.nodes[node].get("rank") == "subgenus"
-
-    only_wiki = nx.subgraph_view(animalia_tree, filter_node=hasSiteLink)
-    only_wiki_tree = nx.bfs_tree(only_wiki, "Q729", reverse=False, depth_limit=None, sort_neighbors=None)
-    print("Animalia tree of connected wiki pages: ", only_wiki_tree)
-    print("Number of wiki pages :", total_site_links)
-    print("Wikipage per taxon :", site_links_per_rank)
-    print("Total count per taxon :", count_per_rank)
-    for rank_id in TAXONS_TO_KEEP:
-        rank = TAXONS_TO_KEEP[rank_id]
-        if rank != "subspecies":
-            prop_ranks[rank] = site_links_per_rank[rank] / count_per_rank[rank]
-    print("Wikipage proportion per taxon :", prop_ranks)
-    print("Taxons with no rank :", no_rank)
+    getAndPrintStats(animalia_tree)
+    pruned_animalia_tree = removeAndReconnect(animalia_tree)
+    getAndPrintStats(pruned_animalia_tree)
+    nx.write_graphml_lxml(pruned_animalia_tree, "results/animalia_tree_filtered.graphml")
+    nx.draw_networkx(pruned_animalia_tree)
+    plt.savefig('graph.pdf')
