@@ -117,7 +117,7 @@ def recurseRemoveNode(tree: nx.DiGraph, node: str, count: int):
         queue.extend(tree.successors(curr_node))
         to_remove.append(curr_node)
         if tree.nodes[curr_node].get("image") and tree.nodes[curr_node]["rank"] == "species":
-            print(f"Removing {curr_node}, {tree.nodes[curr_node].get('scientific')}, {tree.nodes[curr_node].get('vernacular')}")
+            print(f"Removing {curr_node}, {tree.nodes[curr_node].get('scientific')}, {tree.nodes[curr_node].get('vernacular')} because of {node}.")
             count += 1
 
     for node in to_remove:
