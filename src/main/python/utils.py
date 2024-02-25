@@ -109,6 +109,21 @@ def getAndPrintStats(tree: nx.DiGraph):
     print("Wikipage proportion per taxon :", prop_ranks)
     print("Taxons with no rank :", no_rank)
 
+def recurseRemoveNode(tree: nx.DiGraph, node: str, count: int):
+    queue = list(tree.successors(node))
+    to_remove = [node]
+    while queue:
+        curr_node = queue.pop()
+        queue.extend(tree.successors(curr_node))
+        to_remove.append(curr_node)
+        if tree.nodes[curr_node].get("image") and tree.nodes[curr_node]["rank"] == "species":
+            print(f"Removing {curr_node}, {tree.nodes[curr_node].get('scientific')}, {tree.nodes[curr_node].get('vernacular')}")
+            count += 1
+
+    for node in to_remove:
+        tree.remove_node(node)
+
+    return count
 
 def removeAndReconnect(tree: nx.DiGraph):
     pruned_tree = tree.copy()

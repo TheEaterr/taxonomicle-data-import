@@ -77,6 +77,54 @@ def parse_large_json_file(file_path):
                         filtered_data["rank"] = preferred_rank
                     else:
                         filtered_data["rank"] = ranks[0]
+
+            vernacular_claims = json_data["claims"].get("P1843")
+            vernaculars = []
+            preferred_vernacular = None
+            if vernacular_claims:
+                for vernacular_prop in vernacular_claims:
+                    if vernacular_prop.get("rank") == "deprecated":
+                        continue
+                    vernacular_snak = vernacular_prop["mainsnak"]
+                    if (vernacular_snak.get("datavalue") == None):
+                        continue
+                    if vernacular_prop.get("rank") == "preferred":
+                        preferred_vernacular = vernacular_snak["datavalue"]["value"]["text"]
+                    vernacular = vernacular_snak["datavalue"]["value"]["text"]
+                    vernaculars.append(vernacular)
+                if vernaculars:
+                    if preferred_vernacular:
+                        filtered_data["vernacular"] = preferred_vernacular
+                    else:
+                        filtered_data["vernacular"] = vernaculars[0]
+
+            scientific_claims = json_data["claims"].get("P225")
+            scientifics = []
+            preferred_scientific = None
+            if scientific_claims:
+                for scientific_prop in scientific_claims:
+                    if scientific_prop.get("rank") == "deprecated":
+                        continue
+                    scientific_snak = scientific_prop["mainsnak"]
+                    if (scientific_snak.get("datavalue") == None):
+                        continue
+                    if scientific_prop.get("rank") == "preferred":
+                        preferred_scientific = scientific_snak["datavalue"]["value"]
+                    scientific = scientific_snak["datavalue"]["value"]
+                    scientifics.append(scientific)
+                if scientifics:
+                    if preferred_scientific:
+                        filtered_data["scientific"] = preferred_scientific
+                    else:
+                        filtered_data["scientific"] = scientifics[0]
+
+            image_claims = json_data["claims"].get("P18")
+            if image_claims:
+                image_snak = image_claims[0]["mainsnak"]
+                if image_snak.get("datavalue") and image_snak["datavalue"]["type"] == "string":
+                    image = image_snak["datavalue"]["value"]
+                    filtered_data["image"] = image
+
             data[json_data["id"]] = filtered_data
 
             # Update progress bar

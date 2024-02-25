@@ -72,4 +72,5 @@ if __name__ == "__main__":
 
     getAndPrintStats(animalia_tree)
     pruned_animalia_tree = removeAndReconnect(animalia_tree)
+    print(pruned_animalia_tree)
     nx.write_graphml_lxml(pruned_animalia_tree, "results/animalia_tree_filtered.graphml")
