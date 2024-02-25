@@ -1,62 +1,7 @@
 import json
 from tqdm import tqdm
 import networkx as nx
-
-TAXONS_TO_KEEP = {
-    "Q38348": "phylum",
-    "Q164280": "subfamily",
-    "Q227936": "tribe",
-    "Q5867051": "subclass",
-    "Q2889003": "infraorder",
-    "Q35409": "family",
-    "Q3238261": "subgenus",
-    "Q5868144": "superorder",
-    "Q37517": "class",
-    "Q3504061": "superclass",
-    "Q2752679": "subkingdom",
-    "Q2136103": "superfamily",
-    "Q2111790": "superphylum",
-    "Q2361851": "infraphylum",
-    "Q7432": "species",
-    "Q68947": "subspecies",
-    "Q34740": "genus",
-    "Q1153785": "subphylum",
-    "Q3965313": "subtribe",
-    "Q36602": "order",
-    "Q2007442": "infraclass",
-    "Q3150876": "infrakingdon",
-    "Q6311258": "pavorder",
-    "Q36732": "kindgom",
-    "Q5867959": "suborder"
-}
-
-TAXON_RANKS = {
-    "kindgom": 10,
-    "subkingdom": 11,
-    "infrakingdon": 12,
-    "superphylum": 19,
-    "phylum": 20,
-    "subphylum": 21,
-    "infraphylum": 22,
-    "superclass": 29,
-    "class": 30,
-    "subclass": 31,
-    "infraclass": 32,
-    "superorder": 39,
-    "order": 40,
-    "suborder": 41,
-    "infraorder": 42,
-    "pavorder": 43,
-    "superfamily": 49,
-    "family": 50,
-    "subfamily": 51,
-    "tribe": 60,
-    "subtribe": 61,
-    "genus": 70,
-    "subgenus": 71,
-    "species": 80,
-    "subspecies": 81,
-}
+from utils import TAXONS_TO_KEEP, TAXON_RANKS
 
 DOUBLE_TAXONS = []
 
