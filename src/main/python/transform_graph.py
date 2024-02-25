@@ -35,11 +35,17 @@ if __name__ == "__main__":
     full_animalia_tree.nodes["Q7181301"]["rank"] = "subspecies"
     full_animalia_tree.nodes["Q113959354"]["rank"] = "species"
     full_animalia_tree.nodes["Q603237"]["rank"] = "subclass"
+    full_animalia_tree.nodes["Q160"]["rank"] = "infraorder"
+    full_animalia_tree.nodes["Q168366"]["rank"] = "pavorder"
     full_animalia_tree.nodes["Q2781884"].pop("rank")
     full_animalia_tree.nodes["Q85763751"].pop("rank")
     full_animalia_tree.nodes["Q134665"].pop("rank")
     full_animalia_tree.nodes["Q138259"].pop("rank")
     full_animalia_tree.nodes["Q111752876"].pop("rank")
+    full_animalia_tree.nodes["Q1633496"].pop("rank")
+    full_animalia_tree.nodes["Q160830"].pop("rank")
+    full_animalia_tree.nodes["Q2330918"].pop("rank")
+    full_animalia_tree.nodes["Q2254408"].pop("rank")
     full_animalia_tree.remove_edge("Q3699922", "Q5158096")
     full_animalia_tree.add_edge("Q1072243", "Q5158096")
     full_animalia_tree.remove_edge("Q3175675", "Q55000290")
@@ -50,6 +56,10 @@ if __name__ == "__main__":
     full_animalia_tree.add_edge("Q134759", "Q6525920")
     full_animalia_tree.remove_edge("Q16948752", "Q7253962")
     full_animalia_tree.add_edge("Q3655255", "Q7253962")
+    full_animalia_tree.remove_edge("Q18593286", "Q20889393")
+    full_animalia_tree.add_edge("Q29877020", "Q20889393")
+    full_animalia_tree.remove_edge("Q33144235", "Q35083222")
+    full_animalia_tree.add_edge("Q18710482", "Q35083222")
     full_animalia_tree.nodes["Q7253962"]["rank"] = "subfamily"
     full_animalia_tree.nodes["Q65076322"]["rank"] = "subfamily"
     full_animalia_tree.nodes["Q3055723"]["rank"] = "infraorder"
