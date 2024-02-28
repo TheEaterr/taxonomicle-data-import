@@ -105,7 +105,7 @@ def getAndPrintStats(tree: nx.DiGraph):
     print(problems)
 
     def hasSiteLink(node):
-        return tree.nodes[node].get("site_link") == True or not tree.nodes[node].get("rank") or tree.nodes[node].get("rank") == "subgenus"
+        return tree.nodes[node].get("site_link") or not tree.nodes[node].get("rank") or tree.nodes[node].get("rank") == "subgenus"
 
     only_wiki = nx.subgraph_view(tree, filter_node=hasSiteLink)
     only_wiki_tree = nx.bfs_tree(only_wiki, "Q729", reverse=False, depth_limit=None, sort_neighbors=None)

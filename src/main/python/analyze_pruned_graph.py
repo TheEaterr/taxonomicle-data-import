@@ -86,4 +86,4 @@ if __name__ == "__main__":
     removeImportantDiffs(animalia_tree)
     print(animalia_tree)
     analyzeGraph(animalia_tree)
-    # nx.write_graphml_lxml(animalia_tree, "results/animalia_tree_analyzed.graphml")
+    nx.write_graphml_lxml(animalia_tree, "results/animalia_tree_analyzed.graphml")

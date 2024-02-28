@@ -48,10 +48,13 @@ def parse_large_json_file(file_path):
                 parent_id = parent_snak["datavalue"]["value"]["id"]
 
                 G.add_edge(parent_id, json_data["id"])
-                G.nodes[json_data["id"]]["site_link"] = json_data["sitelinks"].get("enwiki") != None
+                # G.nodes[json_data["id"]]["site_link"] = json_data["sitelinks"].get("enwiki") != None
 
             filtered_data = {}
-            filtered_data["site_link"] = json_data["sitelinks"].get("enwiki") != None
+            if json_data["sitelinks"].get("enwiki"):
+                filtered_data["site_link"] = json_data["sitelinks"]["enwiki"]["title"]
+            else:
+                filtered_data["site_link"] = False
 
             rank_claims = json_data["claims"].get("P105")
             ranks = []
@@ -164,6 +167,7 @@ def parse_large_json_file(file_path):
             for key in data[node]:
                 animalia_tree.nodes[node][key] = data[node][key]
         print(animalia_tree.nodes["Q729"])
+        print(animalia_tree.nodes["Q140"])
         DOUBLE_TAXONS_ANIMALIA = []
         DOUBLE_TAXONS_ANIMALIA_WIKI = []
         for taxon_info in DOUBLE_TAXONS:
@@ -172,8 +176,8 @@ def parse_large_json_file(file_path):
                 DOUBLE_TAXONS_ANIMALIA.append(taxon)
                 if animalia_tree.nodes[taxon]["site_link"]:
                     DOUBLE_TAXONS_ANIMALIA_WIKI.append(taxon)
-        print("DOUBLE_TAXONS_ANIMALIA", len(DOUBLE_TAXONS_ANIMALIA), DOUBLE_TAXONS_ANIMALIA)
-        print("DOUBLE_TAXONS_ANIMALIA_WIKI", len(DOUBLE_TAXONS_ANIMALIA_WIKI), DOUBLE_TAXONS_ANIMALIA_WIKI)
+        # print("DOUBLE_TAXONS_ANIMALIA", len(DOUBLE_TAXONS_ANIMALIA), DOUBLE_TAXONS_ANIMALIA)
+        # print("DOUBLE_TAXONS_ANIMALIA_WIKI", len(DOUBLE_TAXONS_ANIMALIA_WIKI), DOUBLE_TAXONS_ANIMALIA_WIKI)
 
         # delete problematic taxons (by removing their rank)
         skip_taxons = []
@@ -228,7 +232,7 @@ def parse_large_json_file(file_path):
                             min_diff = diff
                             min_value = rank
                     animalia_tree.nodes[taxon]["rank"] = rank
-                    # print("Chose ", rank, " for taxon ", taxon)
+
         print(number_problem)
 
         return animalia_tree
