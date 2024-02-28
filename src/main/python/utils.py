@@ -1,5 +1,16 @@
 import networkx as nx
 
+IUCNS = {
+    "Q237350": "EX",
+    "Q239509": "EW",
+    "Q219127": "CR",
+    "Q11394": "EN",
+    "Q278113": "VU",
+    "Q719675": "NT",
+    "Q211005": "LC",
+    "Q3245245": "DD"
+}
+
 TAXONS_TO_KEEP = {
     "Q38348": "phylum",
     "Q164280": "subfamily",

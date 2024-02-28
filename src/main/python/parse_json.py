@@ -1,7 +1,7 @@
 import json
 from tqdm import tqdm
 import networkx as nx
-from utils import TAXONS_TO_KEEP, TAXON_RANKS
+from utils import TAXONS_TO_KEEP, TAXON_RANKS, IUCNS
 
 DOUBLE_TAXONS = []
 
@@ -117,6 +117,31 @@ def parse_large_json_file(file_path):
                         filtered_data["scientific"] = preferred_scientific
                     else:
                         filtered_data["scientific"] = scientifics[0]
+
+            iucn_claims = json_data["claims"].get("P141")
+            iucns = []
+            preferred_iucn = None
+            if iucn_claims:
+                for iucn_prop in iucn_claims:
+                    if iucn_prop.get("rank") == "deprecated":
+                        continue
+                    iucn_snak = iucn_prop["mainsnak"]
+                    if (iucn_snak.get("datavalue") == None):
+                        continue
+                    if iucn_prop.get("rank") == "preferred":
+                        preferred_iucn = TAXONS_TO_KEEP.get(iucn_snak["datavalue"]["value"]["id"])
+                    iucn_id = iucn_snak["datavalue"]["value"]["id"]
+                    iucn = IUCNS.get(iucn_id)
+                    if iucn:
+                        iucns.append(iucn)
+                    else:
+                        print("IUCN not found", iucn_id)
+                if iucns:
+                    if preferred_iucn:
+                        filtered_data["iucn"] = preferred_iucn
+                    else:
+                        filtered_data["iucn"] = iucns[0]
+
 
             image_claims = json_data["claims"].get("P18")
             if image_claims:
