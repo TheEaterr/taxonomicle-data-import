@@ -162,7 +162,7 @@ def parse_large_json_file(file_path):
         progress_bar.close()
         print(mul_rank)
         print("Making animalia tree...")
-        animalia_tree = nx.bfs_tree(G, "Q729", reverse=False, depth_limit=None, sort_neighbors=None)
+        animalia_tree = nx.dfs_tree(G, "Q729")
         for node in animalia_tree.nodes():
             for key in data[node]:
                 animalia_tree.nodes[node][key] = data[node][key]
@@ -187,6 +187,7 @@ def parse_large_json_file(file_path):
         animalia_tree.nodes["Q3111386"].pop("rank")
         animalia_tree.nodes["Q21224524"].pop("rank")
         animalia_tree.nodes["Q343460"].pop("rank")
+        animalia_tree.nodes["Q47544996"].pop("rank")
         skip_taxons.append("Q822890")
         # animalia_tree.nodes["Q26214"]["rank"] = "infraphylum"
         # skip_taxons.append("Q26214")

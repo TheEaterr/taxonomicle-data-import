@@ -86,7 +86,7 @@ def getAndPrintStats(tree: nx.DiGraph):
     for node in tree.nodes():
         node_data = tree.nodes[node]
         if not node_data.get("scientific"):
-            print("No scientific name for", node, node_data)
+            # print("No scientific name for", node, node_data)
             no_scientific += 1
         if node_data["site_link"]:
             total_site_links += 1
