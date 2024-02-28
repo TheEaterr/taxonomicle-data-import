@@ -19,6 +19,11 @@ def detectNonImageParents(tree: nx.DiGraph):
                         break
         print("Ran a loop")
 
+def enforceScientificNames(tree: nx.DiGraph):
+    for node in tree.nodes():
+        if not tree.nodes[node].get("scientific"):
+            tree.nodes[node]["scientific"] = tree.nodes[node]["site_link"]
+
 def analyzeGraph(tree: nx.DiGraph):
     out_degrees = []
     neighbour_diffs = []
@@ -74,16 +79,16 @@ if __name__ == "__main__":
 
     print("Pruned tree of animalia : ", animalia_tree)
     getAndPrintStats(animalia_tree)
-    detectNonImageParents(animalia_tree)
 
+    detectNonImageParents(animalia_tree)
     def isImageParent(node):
         return animalia_tree.nodes[node].get("image_path") == True
-
     image_animalia_tree = nx.subgraph_view(animalia_tree, filter_node=isImageParent)
     print("Pruned tree of animalia going to images : ", image_animalia_tree)
     getAndPrintStats(image_animalia_tree)
 
     removeImportantDiffs(animalia_tree)
-    print(animalia_tree)
+    enforceScientificNames(animalia_tree)
+    getAndPrintStats(animalia_tree)
     analyzeGraph(animalia_tree)
     nx.write_graphml_lxml(animalia_tree, "results/animalia_tree_analyzed.graphml")

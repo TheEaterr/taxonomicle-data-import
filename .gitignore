@@ -9,3 +9,4 @@ pyvenv.cfg
 dumps
 *.ipynb
 __pycache__
+node_modules

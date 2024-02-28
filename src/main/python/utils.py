@@ -74,6 +74,7 @@ def getAndPrintStats(tree: nx.DiGraph):
     count_per_rank = {}
     prop_ranks = {}
     no_rank = 0
+    no_scientific = 0
     problems = 0
     for rank_id in TAXONS_TO_KEEP:
         rank = TAXONS_TO_KEEP[rank_id]
@@ -84,6 +85,9 @@ def getAndPrintStats(tree: nx.DiGraph):
 
     for node in tree.nodes():
         node_data = tree.nodes[node]
+        if not node_data.get("scientific"):
+            print("No scientific name for", node, node_data)
+            no_scientific += 1
         if node_data["site_link"]:
             total_site_links += 1
         if node_data.get("rank"):
@@ -119,6 +123,7 @@ def getAndPrintStats(tree: nx.DiGraph):
             prop_ranks[rank] = site_links_per_rank[rank] / count_per_rank[rank]
     print("Wikipage proportion per taxon :", prop_ranks)
     print("Taxons with no rank :", no_rank)
+    print("Taxons with no scientific :", no_scientific)
 
 def recurseRemoveNode(tree: nx.DiGraph, node: str, count: int):
     queue = list(tree.successors(node))
@@ -128,7 +133,7 @@ def recurseRemoveNode(tree: nx.DiGraph, node: str, count: int):
         queue.extend(tree.successors(curr_node))
         to_remove.append(curr_node)
         if tree.nodes[curr_node].get("image") and tree.nodes[curr_node]["rank"] == "species":
-            print(f"Removing {curr_node}, {tree.nodes[curr_node].get('scientific')}, {tree.nodes[curr_node].get('vernacular')} because of {node}.")
+            # print(f"Removing {curr_node}, {tree.nodes[curr_node].get('scientific')}, {tree.nodes[curr_node].get('vernacular')} because of {node}.")
             count += 1
 
     for node in to_remove:
