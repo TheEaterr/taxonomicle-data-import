@@ -50,7 +50,8 @@ if (jsonData) {
         try {
             await pb.collection('taxon').create(dbData);
         } catch (error) {
-            console.error('Error creating taxon: ' + key, error.message);
+            console.error('Error creating taxon: ' + key);
+            throw error;
         }
     }
 }
