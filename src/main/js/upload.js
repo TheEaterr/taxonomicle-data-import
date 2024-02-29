@@ -45,6 +45,7 @@ if (jsonData) {
             "scientific": data.scientific ?? undefined,
             "image": data.image ?? undefined,
             "iucn": data.iucn ?? undefined,
+            "image_path": data.image_path,
             "field": data.parent ? processString(data.parent) : undefined
         };
         try {
