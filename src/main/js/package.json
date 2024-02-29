@@ -5,7 +5,8 @@
   "description": "",
   "main": "upload.js",
   "scripts": {
-    "start": "node upload.js",
+    "upload": "node upload.js",
+    "prepare": "node getImageLinks.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
