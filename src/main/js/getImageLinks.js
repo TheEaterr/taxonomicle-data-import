@@ -1,18 +1,15 @@
 import { processString, jsonData, readJSONFile } from './utils.js';
 import fs from 'fs';
 
-const images = {};
-
 if (jsonData) {
-    const knownImages = readJSONFile('../../../results/images.json')
-    const knownImagesLength = Object.keys(knownImages).length;
+    const images = readJSONFile('../../../results/images.json')
     let count = 0;
     for (const key in jsonData) {
         const data = jsonData[key];
         const id = processString(key);
         let responseData;
         try {
-            if (data.image && !knownImages[id]) {
+            if (data.image && !images[id]) {
                 const image = encodeURIComponent(data.image);
                 const response = await fetch(`https://commons.wikimedia.org/w/api.php?action=query&iiprop=url&prop=imageinfo&titles=File%3A${image}&format=json`);
                 if (!response.ok) {
@@ -25,10 +22,9 @@ if (jsonData) {
             console.error('Error getting image for taxon: ' + key);
             console.log(responseData)
             console.log(`https://commons.wikimedia.org/w/api.php?action=query&iiprop=url&prop=imageinfo&titles=File%3A${encodeURIComponent(data.image)}&format=json`)
-            throw error;
         }
         count++;
-        if (count % 100 === 0 && count > knownImagesLength) {
+        if (count % 100 === 0) {
             fs.writeFileSync('../../../results/images.json', JSON.stringify(images));
             console.log('Processed ' + count + ' taxons');
         }
