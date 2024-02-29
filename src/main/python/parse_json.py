@@ -33,6 +33,9 @@ def parse_large_json_file(file_path):
             # Example: print(json_data)
             # print(json_data)
             parents = json_data["claims"]["P171"]
+            if (json_data["id"] == "Q5173"):
+                G.add_edge("Q5174", json_data["id"])
+                parents = []
             has_preferred_parent = False
             for parent in parents:
                 if parent.get("rank") == "preferred":

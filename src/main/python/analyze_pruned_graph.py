@@ -66,11 +66,15 @@ def removeImportantDiffs(tree: nx.DiGraph):
         if tree.nodes().get(node):
             node_rank = tree.nodes[node]["rank"]
             successors = list(tree.successors(node))
+            removed = 0
             for successor in successors:
                 successor_rank = tree.nodes[successor]["rank"]
                 diff = TAXON_RANKS[successor_rank] - TAXON_RANKS[node_rank]
                 if diff > 25:
                     count = recurseRemoveNode(tree, successor, count)
+                    removed += 1
+            if removed and removed == len(successors):
+                count = recurseRemoveNode(tree, node, count)
     print(count)
 
 
