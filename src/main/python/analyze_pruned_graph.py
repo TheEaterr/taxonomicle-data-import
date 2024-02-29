@@ -19,6 +19,23 @@ def detectNonImageParents(tree: nx.DiGraph):
                         break
         print("Ran a loop")
 
+def detectNonSpeciesParents(tree: nx.DiGraph):
+    for node in tree.nodes():
+        if tree.nodes[node].get("rank") == "species":
+            tree.nodes[node]["species_path"] = True
+    changed = True
+    while changed:
+        changed = False
+        for node in tree.nodes():
+            if not tree.nodes[node].get("species_path"):
+                successors = list(tree.successors(node))
+                for successor in successors:
+                    if tree.nodes[successor].get("species_path"):
+                        tree.nodes[node]["species_path"] = True
+                        changed = True
+                        break
+        print("Ran a loop")
+
 def enforceScientificNames(tree: nx.DiGraph):
     for node in tree.nodes():
         if not tree.nodes[node].get("scientific"):
@@ -93,6 +110,11 @@ if __name__ == "__main__":
 
     removeImportantDiffs(animalia_tree)
     enforceScientificNames(animalia_tree)
-    getAndPrintStats(animalia_tree)
-    analyzeGraph(animalia_tree)
-    nx.write_graphml_lxml(animalia_tree, "results/animalia_tree_analyzed.graphml")
+    detectNonSpeciesParents(animalia_tree)
+    def isSpeciesParent(node):
+        return animalia_tree.nodes[node].get("species_path") == True
+    pure_animalia_tree = nx.subgraph_view(animalia_tree, filter_node=isSpeciesParent)
+    print("Pure tree of animalia : ", pure_animalia_tree)
+    getAndPrintStats(pure_animalia_tree)
+    analyzeGraph(pure_animalia_tree)
+    nx.write_graphml_lxml(pure_animalia_tree, "results/animalia_tree_analyzed.graphml")

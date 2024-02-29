@@ -150,7 +150,7 @@ def removeAndReconnect(tree: nx.DiGraph):
     nodes = list(pruned_tree)[:]
     for node in nodes:
         node_data = pruned_tree.nodes[node]
-        if node_data.get("rank") is None or not node_data["site_link"] or not node_data.get("species_path"):
+        if node_data.get("rank") is None or not node_data["site_link"]:
             successors = list(pruned_tree.successors(node))
             predecessors = list(pruned_tree.predecessors(node))
             if len(predecessors) > 0:

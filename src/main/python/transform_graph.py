@@ -3,23 +3,6 @@ from time import time
 import matplotlib.pyplot as plt
 from utils import getAndPrintStats, removeAndReconnect
 
-def detectNonSpeciesParents(tree: nx.DiGraph):
-    for node in tree.nodes():
-        if tree.nodes[node].get("rank") == "species":
-            tree.nodes[node]["species_path"] = True
-    changed = True
-    while changed:
-        changed = False
-        for node in tree.nodes():
-            if not tree.nodes[node].get("species_path"):
-                successors = list(tree.successors(node))
-                for successor in successors:
-                    if tree.nodes[successor].get("species_path"):
-                        tree.nodes[node]["species_path"] = True
-                        changed = True
-                        break
-        print("Ran a loop")
-
 if __name__ == "__main__":
     t = time()
     full_animalia_tree = nx.read_graphml("results/animalia_tree.graphml")
@@ -98,7 +81,6 @@ if __name__ == "__main__":
     animalia_tree = nx.subgraph_view(full_animalia_tree, filter_node=isNotSubspecies)
 
     getAndPrintStats(animalia_tree)
-    detectNonSpeciesParents(animalia_tree)
     pruned_animalia_tree = removeAndReconnect(animalia_tree)
     print(pruned_animalia_tree)
     nx.write_graphml_lxml(pruned_animalia_tree, "results/animalia_tree_filtered.graphml")
