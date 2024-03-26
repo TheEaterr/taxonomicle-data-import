@@ -189,6 +189,8 @@ public class JsonSerializationProcessor extends EntityTimerProcessor {
 	private boolean includeDocument(ItemDocument itemDocument) {
 		boolean hasParent = false;
 		boolean isTaxon = false;
+		// instance of taxon, clade or monotypic taxon
+		Set<String> taxonInstances = Set.of("Q16521", "Q713623", "Q310890");
 		for (StatementGroup sg : itemDocument.getStatementGroups()) {
 			// return true;
 			if ("P171".equals(sg.getProperty().getId())) {
@@ -201,7 +203,7 @@ public class JsonSerializationProcessor extends EntityTimerProcessor {
 				if (s.getMainSnak() instanceof ValueSnak) {
 					Value v = s.getValue();
 					if (v instanceof ItemIdValue
-							&& ("Q16521".equals(((ItemIdValue) v).getId()) || "Q713623".equals(((ItemIdValue) v).getId()))) {
+							&& taxonInstances.contains(((ItemIdValue) v).getId())) {
 						isTaxon = true;
 						break;
 					}
