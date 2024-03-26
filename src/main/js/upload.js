@@ -1,4 +1,4 @@
-import { processString, jsonData, pb } from './utils.js';
+import { processString, jsonData, pb, readJSONFile } from './utils.js';
 
 if (jsonData) {
     const images = readJSONFile('../../../results/images.json')

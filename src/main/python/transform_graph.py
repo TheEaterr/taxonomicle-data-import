@@ -70,6 +70,8 @@ if __name__ == "__main__":
     full_animalia_tree.add_edge("Q29877020", "Q20889393")
     full_animalia_tree.remove_edge("Q33144235", "Q35083222")
     full_animalia_tree.add_edge("Q18710482", "Q35083222")
+    full_animalia_tree.remove_edge("Q25375", "Q4035771")
+    full_animalia_tree.add_edge("Q230502", "Q4035771")
     full_animalia_tree.nodes["Q7253962"]["rank"] = "subfamily"
     full_animalia_tree.nodes["Q65076322"]["rank"] = "subfamily"
     full_animalia_tree.nodes["Q3055723"]["rank"] = "infraorder"
