@@ -15,6 +15,7 @@ if __name__ == "__main__":
     full_animalia_tree.nodes["Q104857767"]["rank"] = "species"
     full_animalia_tree.nodes["Q104815681"]["rank"] = "genus"
     full_animalia_tree.nodes["Q117291954"]["rank"] = "genus"
+    full_animalia_tree.nodes["Q551092"]["rank"] = "subfamily"
     full_animalia_tree.nodes["Q47966"].pop("rank")
     full_animalia_tree.nodes["Q47969"].pop("rank")
     full_animalia_tree.nodes["Q245695"].pop("rank")
@@ -23,6 +24,10 @@ if __name__ == "__main__":
     full_animalia_tree.nodes["Q7444798"].pop("rank")
     full_animalia_tree.nodes["Q1096960"].pop("rank")
     full_animalia_tree.nodes["Q2910821"].pop("rank")
+    # Unaccepted taxon according to WOoMS
+    full_animalia_tree.nodes["Q28432106"].pop("rank")
+    # Seems to be a subgenus in WoRMS
+    full_animalia_tree.nodes["Q21224351"].pop("rank")
     full_animalia_tree.nodes["Q161095"]["rank"] = "infraphylum"
     full_animalia_tree.nodes["Q275544"]["rank"] = "subclass"
     full_animalia_tree.nodes["Q567567"]["rank"] = "superorder"

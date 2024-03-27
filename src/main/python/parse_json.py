@@ -228,17 +228,17 @@ def parse_large_json_file(file_path):
                     animalia_tree.nodes[taxon].pop("rank")
                 else:
                     min_diff = 100
-                    min_value = None
+                    min_value = all_filter_ranks[0]
                     for rank in all_filter_ranks:
                         taxon_rank = TAXON_RANKS[rank]
                         diff = abs((taxon_rank // 10) * taxon_rank - taxon_rank)
                         if diff < min_diff:
                             min_diff = diff
                             min_value = rank
-                    animalia_tree.nodes[taxon]["rank"] = rank
+                    animalia_tree.nodes[taxon]["rank"] = min_value
 
         print(number_problem)
-
+            
         return animalia_tree
 
 if __name__ == "__main__":
