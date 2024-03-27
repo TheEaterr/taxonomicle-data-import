@@ -5,6 +5,7 @@ if (jsonData) {
     for (const key in jsonData) {
         const data = jsonData[key];
         const id = processString(key);
+        const path = data.path.map((pathItem) => processString(pathItem));
         const dbData = {
             "id": id,
             "site_link": data.site_link,
@@ -13,7 +14,8 @@ if (jsonData) {
             "scientific": data.scientific ?? undefined,
             "iucn": data.iucn ?? undefined,
             "image_path": data.image_path ?? false,
-            "parent": data.parent ? processString(data.parent) : undefined
+            "parent": data.parent ? processString(data.parent) : undefined,
+            "path": path,
         };
         if (images[id]) {
             dbData.image_link = images[id];

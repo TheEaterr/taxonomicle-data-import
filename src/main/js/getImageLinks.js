@@ -24,7 +24,7 @@ if (jsonData) {
             console.log(`https://commons.wikimedia.org/w/api.php?action=query&iiprop=url&prop=imageinfo&titles=File%3A${encodeURIComponent(data.image)}&format=json`)
         }
         count++;
-        if (count % 100 === 0) {
+        if (count % 1000 === 0) {
             fs.writeFileSync('../../../results/images.json', JSON.stringify(images));
             console.log('Processed ' + count + ' taxons');
         }

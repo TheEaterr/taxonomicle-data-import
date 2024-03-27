@@ -11,4 +11,4 @@ Several pieces of code need to be executed to build the dataset. Here are the va
 mvn exec:java -Dexec.mainClass="fr.taxonomicle.data_import.LocalDumpFileExample"
 ```
 - Launch the python codes `parse_json.py` then `transform_graph.py` then `analyze_pruned_graph.py` then `graph_to_json.py`
-- Launch the `javascript` code `getImageLinks.js` then `upload.js`. The last one needs an instance of `PocketBase` made with the website repo launched
+- Launch the `javascript` code `getImageLinks.js` then `upload.js` (with `npm run` in the `js` folder). The last one needs an instance of `PocketBase` made with the website repo launched
