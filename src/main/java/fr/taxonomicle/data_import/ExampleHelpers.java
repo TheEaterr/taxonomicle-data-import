@@ -20,7 +20,7 @@
 * #L%
 */
 
-package fr.taxonomicle.data_import;
+package com.taxonomicle.data_import;
 
 import java.io.FileOutputStream;
 import java.io.IOException;

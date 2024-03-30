@@ -4,7 +4,7 @@ import { processString, jsonData, pb, readJSONFile } from './utils.js';
 const TAXON_RANKS = {
     "kindgom": 10,
     "subkingdom": 11,
-    "infrakingdon": 12,
+    "infrakingdom": 12,
     "superphylum": 19,
     "phylum": 20,
     "subphylum": 21,

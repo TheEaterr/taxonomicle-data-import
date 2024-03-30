@@ -8,7 +8,7 @@ Several pieces of code need to be executed to build the dataset. Here are the va
 
 - Download a `wikidata` dump in `json` format and change the path to it in `LocalDumpFileExample.java` then execute this file
 ```bash
-mvn exec:java -Dexec.mainClass="fr.taxonomicle.data_import.LocalDumpFileExample"
+mvn exec:java -Dexec.mainClass="com.taxonomicle.data_import.LocalDumpFileExample"
 ```
 - Launch the python codes `parse_json.py` then `transform_graph.py` then `analyze_pruned_graph.py` then `graph_to_json.py`
 - Launch the `javascript` code `getImageLinks.js` then `upload.js` (with `npm run` in the `js` folder). The last one needs an instance of `PocketBase` made with the website repo launched

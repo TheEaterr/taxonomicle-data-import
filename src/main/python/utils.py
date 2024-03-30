@@ -33,7 +33,7 @@ TAXONS_TO_KEEP = {
     "Q3965313": "subtribe",
     "Q36602": "order",
     "Q2007442": "infraclass",
-    "Q3150876": "infrakingdon",
+    "Q3150876": "infrakingdom",
     "Q6311258": "pavorder",
     "Q36732": "kindgom",
     "Q5867959": "suborder"
@@ -42,7 +42,7 @@ TAXONS_TO_KEEP = {
 TAXON_RANKS = {
     "kindgom": 10,
     "subkingdom": 11,
-    "infrakingdon": 12,
+    "infrakingdom": 12,
     "superphylum": 19,
     "phylum": 20,
     "subphylum": 21,
