@@ -2,7 +2,7 @@ import { processString, jsonData, pb, readJSONFile } from './utils.js';
 
 // Gotten froom the python code, as to manually be added here
 const TAXON_RANKS = {
-    "kindgom": 10,
+    "kingdom": 10,
     "subkingdom": 11,
     "infrakingdom": 12,
     "superphylum": 19,
