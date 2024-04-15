@@ -43,7 +43,7 @@ public class LocalDumpFileExample {
 	private final static String DUMP_FILE = "./dumps/latest-all.json.gz";
 
 	public static void main(String[] args) throws IOException {
-		ExampleHelpers.configureLogging();
+		ExampleHelpers.configureLogging() ;
 		LocalDumpFileExample.printDocumentation();
 
 		DumpProcessingController dumpProcessingController = new DumpProcessingController(
