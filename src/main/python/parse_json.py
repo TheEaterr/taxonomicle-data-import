@@ -68,6 +68,11 @@ def parse_large_json_file(file_path):
                         continue
                     rank_snak = rank_prop["mainsnak"]
                     if (rank_snak.get("datavalue") == None):
+                        if rank_prop.get("rank") == "preferred":
+                            # no rank is preferred so we remove everything
+                            ranks = []
+                            preferred_rank = None
+                            break
                         continue
                     if rank_prop.get("rank") == "preferred":
                         preferred_rank = TAXONS_TO_KEEP.get(rank_snak["datavalue"]["value"]["id"])

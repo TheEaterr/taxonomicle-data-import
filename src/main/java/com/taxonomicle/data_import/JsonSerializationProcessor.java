@@ -63,22 +63,6 @@ public class JsonSerializationProcessor extends EntityTimerProcessor {
 	private int siteLinkCount;
 
 	/**
-	 * Runs the example program.
-	 *
-	 * @param args
-	 * @throws IOException
-	 *             if there was a problem in writing the output file
-	 */
-	public static void main(String[] args) throws IOException {
-		ExampleHelpers.configureLogging();
-		JsonSerializationProcessor.printDocumentation();
-
-		JsonSerializationProcessor jsonSerializationProcessor = new JsonSerializationProcessor();
-		ExampleHelpers.processEntitiesFromWikidataDump(jsonSerializationProcessor);
-		jsonSerializationProcessor.close();
-	}
-
-	/**
 	 * Constructor. Initializes various helper objects we use for the JSON
 	 * serialization, and opens the file that we want to write to.
 	 *
