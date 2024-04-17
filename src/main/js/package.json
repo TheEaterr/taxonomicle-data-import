@@ -6,7 +6,7 @@
   "main": "upload.js",
   "scripts": {
     "upload": "node upload.js",
-    "prepare": "node getImageLinks.js",
+    "prepare": "node getDescriptions.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

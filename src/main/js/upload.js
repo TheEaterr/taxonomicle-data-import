@@ -47,7 +47,7 @@ for (const key in TAXON_RANKS) {
 }
 
 if (jsonData) {
-    const images = readJSONFile('../../../results/images.json')
+    const descriptions = readJSONFile('../../../results/descriptions.json')
     for (const key in jsonData) {
         const data = jsonData[key];
         const id = processString(key);
@@ -60,11 +60,12 @@ if (jsonData) {
             "scientific": data.scientific ?? undefined,
             "iucn": data.iucn ?? undefined,
             "image_path": data.image_path ?? false,
+            "image": data.image ? encodeURIComponent(data.image) : undefined,
             "parent": data.parent ? processString(data.parent) : undefined,
             "path": path,
         };
-        if (images[id]) {
-            dbData.image_link = images[id];
+        if (descriptions[id]) {
+            dbData.description = descriptions[id];
         }
         try {
             await pb.collection('taxon').create(dbData);
