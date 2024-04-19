@@ -64,8 +64,8 @@ if (jsonData) {
             "parent": data.parent ? processString(data.parent) : undefined,
             "path": path,
         };
-        if (descriptions[id]) {
-            dbData.description = descriptions[id];
+        if (descriptions[key]) {
+            dbData.description = descriptions[key];
         }
         try {
             await pb.collection('taxon').create(dbData);

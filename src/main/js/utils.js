@@ -2,7 +2,7 @@ import fs from "fs";
 import PocketBase from "pocketbase";
 import {
     ADMIN_EMAIL, ADMIN_PASSWORD
-} from "secret"
+} from "./secret.js"
 
 export const pb = new PocketBase("http://127.0.0.1:8090");
 
