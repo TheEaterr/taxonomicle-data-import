@@ -10,3 +10,4 @@ dumps
 *.ipynb
 __pycache__
 node_modules
+secret.js
