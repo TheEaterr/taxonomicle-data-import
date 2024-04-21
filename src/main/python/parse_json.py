@@ -1,7 +1,7 @@
 import json
 from tqdm import tqdm
 import networkx as nx
-from utils import TAXONS_TO_KEEP, TAXON_RANKS, IUCNS
+from utils import TAXONS_TO_KEEP, TAXON_RANKS, IUCNS, removeAndReconnect
 
 DOUBLE_TAXONS = []
 
@@ -184,6 +184,8 @@ def parse_large_json_file(file_path):
             data[node]["height"] = i
         animalia_tree = nx.DiGraph()
         animalia_tree.add_node("Q729")
+        # We use a topological sort to get the longest path possible
+        # as it is the most likely to be correct
         for node in topo_sort:
             if node not in data:
                 continue
@@ -200,23 +202,10 @@ def parse_large_json_file(file_path):
             if max_height_node:
                 animalia_tree.add_edge(max_height_node, node)
                 
-        # for node in animalia_tree.nodes():
-        #     for key in data[node]:
-        #         animalia_tree.nodes[node][key] = data[node][key]
-        print(animalia_tree.nodes["Q729"])
-        print(animalia_tree.nodes["Q140"])
-        DOUBLE_TAXONS_ANIMALIA = []
-        DOUBLE_TAXONS_ANIMALIA_WIKI = []
-        for taxon_info in DOUBLE_TAXONS:
-            taxon = taxon_info["id"]
-            if animalia_tree.has_node(taxon):
-                DOUBLE_TAXONS_ANIMALIA.append(taxon)
-                if animalia_tree.nodes[taxon]["site_link"]:
-                    DOUBLE_TAXONS_ANIMALIA_WIKI.append(taxon)
-        # print("DOUBLE_TAXONS_ANIMALIA", len(DOUBLE_TAXONS_ANIMALIA), DOUBLE_TAXONS_ANIMALIA)
-        # print("DOUBLE_TAXONS_ANIMALIA_WIKI", len(DOUBLE_TAXONS_ANIMALIA_WIKI), DOUBLE_TAXONS_ANIMALIA_WIKI)
-
-        # delete problematic taxons (by removing their rank)
+        animalia_tree.nodes["Q2072138"]["site_link"] = "Myxiniformes"
+        animalia_tree.nodes["Q15100334"]["site_link"] = "Myxini"
+        
+        # delete problematic taxa (by removing their rank)
         skip_taxons = []
         animalia_tree.nodes["Q3748423"].pop("rank")
         animalia_tree.nodes["Q4000124"].pop("rank")
@@ -225,19 +214,23 @@ def parse_large_json_file(file_path):
         animalia_tree.nodes["Q21224524"].pop("rank")
         animalia_tree.nodes["Q343460"].pop("rank")
         animalia_tree.nodes["Q47544996"].pop("rank")
+        # According to worms, Enopla is not an accepted taxon
+        # animalia_tree.nodes["Q275879"].pop("rank")
+        # And Hoplonemertea is a class
+        animalia_tree.nodes["Q9293731"]["rank"] = "class"
         
         # remove all zoa phylums
         animalia_tree.nodes["Q2698547"].pop("rank")
         animalia_tree.nodes["Q1407833"].pop("rank")
         animalia_tree.nodes["Q2503841"].pop("rank")
         animalia_tree.nodes["Q27207"].pop("rank")
-        animalia_tree.nodes["Q48918"].pop("rank")
-        for node in list(animalia_tree.successors("Q48918")):
-            animalia_tree.remove_edge("Q48918", node)
-            animalia_tree.add_edge("Q194257", node)
+        # animalia_tree.nodes["Q48918"].pop("rank")
+        # for node in list(animalia_tree.successors("Q48918")):
+        #     animalia_tree.remove_edge("Q48918", node)
+        #     animalia_tree.add_edge("Q194257", node)
         
-        animalia_tree.nodes["Q2072138"]["site_link"] = "Myxiniformes"
-        animalia_tree.nodes["Q15100334"]["site_link"] = "Myxini"
+        # Removing non-site link from the tree
+        animalia_tree = removeAndReconnect(animalia_tree)
         
         skip_taxons.append("Q822890")
         # animalia_tree.nodes["Q26214"]["rank"] = "infraphylum"
