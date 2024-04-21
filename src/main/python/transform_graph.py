@@ -64,6 +64,9 @@ if __name__ == "__main__":
     full_animalia_tree.nodes["Q321481"].pop("rank")
     full_animalia_tree.nodes["Q3609046"].pop("rank")
     
+    # extinct family
+    full_animalia_tree.nodes["Q20817854"].pop("rank")
+    
     # Remove Conchifera and Aclopophora because they are not in WoRMS
     full_animalia_tree.nodes["Q213228"].pop("rank")
     full_animalia_tree.nodes["Q675203"].pop("rank")
@@ -85,6 +88,10 @@ if __name__ == "__main__":
     full_animalia_tree.remove_edge("Q784667", "Q35083222")
     full_animalia_tree.add_edge("Q18710482", "Q35083222")
     
+    full_animalia_tree.remove_edge("Q425791", "Q26897763")
+    full_animalia_tree.remove_edge("Q1552315", "Q425791")
+    full_animalia_tree.add_edge("Q26897763", "Q425791")
+    
     # Q244269 was written as a child of a species
     full_animalia_tree.remove_edge("Q662226", "Q244269")
     full_animalia_tree.add_edge("Q223302", "Q244269")
@@ -94,6 +101,8 @@ if __name__ == "__main__":
     full_animalia_tree.nodes["Q3055723"]["rank"] = "infraorder"
     full_animalia_tree.nodes["Q10492551"]["rank"] = "subgenus"
     full_animalia_tree.nodes["Q1185781"]["rank"] = "superorder"
+    # Following what is written in wikipedia
+    full_animalia_tree.nodes["Q4286979"]["rank"] = "subgenus"
     # Remove holotherians
     full_animalia_tree.nodes["Q2478975"].pop("rank")
     # Remove eutherians
@@ -102,6 +111,10 @@ if __name__ == "__main__":
     # malacostraca are multicrustacea
     full_animalia_tree.remove_edge("Q25364", "Q182978")
     full_animalia_tree.add_edge("Q11937877", "Q182978")
+    
+    # Species under another species
+    full_animalia_tree.remove_edge("Q168327", "Q328516")
+    full_animalia_tree.add_edge("Q172923", "Q328516")
     
     # removing maxillpoda as they only contain copepoda and Flavien
     # wanted me to
