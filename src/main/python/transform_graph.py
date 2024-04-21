@@ -63,6 +63,9 @@ if __name__ == "__main__":
     full_animalia_tree.nodes["Q5173"].pop("rank")
     full_animalia_tree.nodes["Q321481"].pop("rank")
     full_animalia_tree.nodes["Q3609046"].pop("rank")
+    # Remove Endopterygota considered as a clade and not a suborder in
+    # wikipedia
+    full_animalia_tree.nodes["Q304358"].pop("rank")
     
     # extinct family
     full_animalia_tree.nodes["Q20817854"].pop("rank")
@@ -84,6 +87,13 @@ if __name__ == "__main__":
     # full_animalia_tree.add_edge("Q230502", "Q4035771")
     full_animalia_tree.remove_edge("Q1782769", "Q20889393")
     full_animalia_tree.add_edge("Q29877020", "Q20889393")
+    
+    # restore Aulipotyphla to their correct place
+    full_animalia_tree.remove_edge("Q7377", "Q16635184")
+    full_animalia_tree.add_edge("Q27379", "Q16635184")
+    
+    full_animalia_tree.remove_edge("Q7377", "Q26332")
+    full_animalia_tree.add_edge("Q25336", "Q26332")
     
     full_animalia_tree.remove_edge("Q784667", "Q35083222")
     full_animalia_tree.add_edge("Q18710482", "Q35083222")
@@ -118,7 +128,7 @@ if __name__ == "__main__":
     
     # removing maxillpoda as they only contain copepoda and Flavien
     # wanted me to
-    # full_animalia_tree.remove_node("Q132662")
+    full_animalia_tree.nodes["Q132662"].pop("rank")
     
     def isNotSubspecies(node):
         return full_animalia_tree.nodes[node].get("rank") != "subspecies"

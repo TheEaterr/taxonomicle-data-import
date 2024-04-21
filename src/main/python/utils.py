@@ -141,22 +141,21 @@ def recurseRemoveNode(tree: nx.DiGraph, node: str, count: int):
 
     return count
 
-def removeAndReconnect(tree: nx.DiGraph):
-    pruned_tree = tree.copy()
-    print(pruned_tree)
-    # Remove nodes with no rank
-
-    to_remove = []
-    nodes = list(pruned_tree)[:]
+def removeAndReconnect(graph: nx.DiGraph, data = None):
+    pruned_graph = graph.copy()
+    print(pruned_graph)
+    nodes = list(pruned_graph)[:]
     for node in nodes:
-        node_data = pruned_tree.nodes[node]
-        if node_data.get("rank") is None or not node_data["site_link"]:
-            successors = list(pruned_tree.successors(node))
-            predecessors = list(pruned_tree.predecessors(node))
-            if len(predecessors) > 0:
-                predecessor = predecessors[0]
+        if data is None:
+            node_data = pruned_graph.nodes[node]
+        else:
+            node_data = data.get(node)
+        if node_data is None or node_data.get("rank") is None or not node_data["site_link"]:
+            successors = list(pruned_graph.successors(node))
+            predecessors = list(pruned_graph.predecessors(node))
+            for predecessor in predecessors:
                 for successor in successors:
-                    pruned_tree.add_edge(predecessor, successor)
-            pruned_tree.remove_node(node)
+                    pruned_graph.add_edge(predecessor, successor)
+            pruned_graph.remove_node(node)
 
-    return pruned_tree
+    return pruned_graph

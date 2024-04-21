@@ -174,7 +174,15 @@ def parse_large_json_file(file_path):
         # subfamily
         G.remove_edge('Q123912920', 'Q2708291')
         G.remove_edge('Q124289021', 'Q124289021')
+        data["Q2072138"]["site_link"] = "Myxiniformes"
+        data["Q15100334"]["site_link"] = "Myxini"
+        
+        
         print("Making animalia tree...")
+        
+        # Remove taxa without rank or site_link
+        G = removeAndReconnect(G, data=data)
+        # Remove taxa not connected to animalia
         connected_to_animalia = nx.dfs_tree(G, "Q729")
         for node in list(G):
             if node not in connected_to_animalia:
@@ -201,9 +209,6 @@ def parse_large_json_file(file_path):
                         max_height_node = parent
             if max_height_node:
                 animalia_tree.add_edge(max_height_node, node)
-                
-        animalia_tree.nodes["Q2072138"]["site_link"] = "Myxiniformes"
-        animalia_tree.nodes["Q15100334"]["site_link"] = "Myxini"
         
         # delete problematic taxa (by removing their rank)
         skip_taxons = []
@@ -229,7 +234,6 @@ def parse_large_json_file(file_path):
         #     animalia_tree.remove_edge("Q48918", node)
         #     animalia_tree.add_edge("Q194257", node)
         
-        # Removing non-site link from the tree
         animalia_tree = removeAndReconnect(animalia_tree)
         
         skip_taxons.append("Q822890")
