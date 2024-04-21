@@ -60,7 +60,7 @@ if (jsonData) {
             "scientific": data.scientific ?? undefined,
             "iucn": data.iucn ?? undefined,
             "image_path": data.image_path ?? false,
-            "image": data.image ? encodeURIComponent(data.image) : undefined,
+            "image_link": data.image ? encodeURIComponent(data.image) : undefined,
             "parent": data.parent ? processString(data.parent) : undefined,
             "path": path,
         };
