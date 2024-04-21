@@ -53,12 +53,16 @@ if __name__ == "__main__":
     full_animalia_tree.nodes["Q2513125"].pop("rank")
     full_animalia_tree.nodes["Q1231177"].pop("rank")
     full_animalia_tree.nodes["Q337777"].pop("rank")
-    full_animalia_tree.nodes["Q1211307"].pop("rank")
+    # full_animalia_tree.nodes["Q1211307"].pop("rank")
     full_animalia_tree.nodes["Q671280"].pop("rank")
     full_animalia_tree.nodes["Q46851"].pop("rank")
     full_animalia_tree.nodes["Q27584"].pop("rank")
     full_animalia_tree.nodes["Q7921546"].pop("rank")
     full_animalia_tree.nodes["Q5173"].pop("rank")
+    
+    # Remove Conchifera and Aclopophora because they are not in WoRMS
+    full_animalia_tree.nodes["Q213228"].pop("rank")
+    full_animalia_tree.nodes["Q675203"].pop("rank")
     full_animalia_tree.remove_edge("Q3699922", "Q5158096")
     full_animalia_tree.add_edge("Q1072243", "Q5158096")
     full_animalia_tree.remove_edge("Q3175675", "Q55000290")
@@ -73,12 +77,20 @@ if __name__ == "__main__":
     full_animalia_tree.add_edge("Q29877020", "Q20889393")
     full_animalia_tree.remove_edge("Q33144235", "Q35083222")
     full_animalia_tree.add_edge("Q18710482", "Q35083222")
-    full_animalia_tree.remove_edge("Q25375", "Q4035771")
+    # full_animalia_tree.remove_edge("Q25375", "Q4035771")
     full_animalia_tree.add_edge("Q230502", "Q4035771")
     full_animalia_tree.nodes["Q7253962"]["rank"] = "subfamily"
     full_animalia_tree.nodes["Q65076322"]["rank"] = "subfamily"
     full_animalia_tree.nodes["Q3055723"]["rank"] = "infraorder"
     full_animalia_tree.nodes["Q10492551"]["rank"] = "subgenus"
+    
+    # malacostraca are multicrustacea
+    full_animalia_tree.remove_edge("Q25364", "Q182978")
+    full_animalia_tree.add_edge("Q11937877", "Q182978")
+    
+    # removing maxillpoda as they only contain copepoda and Flavien
+    # wanted me to
+    full_animalia_tree.remove_node("Q132662")
     
     def isNotSubspecies(node):
         return full_animalia_tree.nodes[node].get("rank") != "subspecies"

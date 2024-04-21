@@ -169,11 +169,40 @@ def parse_large_json_file(file_path):
         # Close progress bar after completion
         progress_bar.close()
         print(mul_rank)
+        
+        # Remove edge that shouldn't be there between a genus and its
+        # subfamily
+        G.remove_edge('Q123912920', 'Q2708291')
+        G.remove_edge('Q124289021', 'Q124289021')
         print("Making animalia tree...")
-        animalia_tree = nx.dfs_tree(G, "Q729")
-        for node in animalia_tree.nodes():
+        connected_to_animalia = nx.dfs_tree(G, "Q729")
+        for node in list(G):
+            if node not in connected_to_animalia:
+                G.remove_node(node)
+        topo_sort = list(nx.topological_sort(G))
+        for i, node in enumerate(topo_sort):
+            data[node]["height"] = i
+        animalia_tree = nx.DiGraph()
+        animalia_tree.add_node("Q729")
+        for node in topo_sort:
+            if node not in data:
+                continue
+            animalia_tree.add_node(node)
             for key in data[node]:
                 animalia_tree.nodes[node][key] = data[node][key]
+            max_height = -1
+            max_height_node = None
+            for parent in G.predecessors(node):
+                if parent in data:
+                    if data[parent]["height"] > max_height:
+                        max_height = data[parent]["height"]
+                        max_height_node = parent
+            if max_height_node:
+                animalia_tree.add_edge(max_height_node, node)
+                
+        # for node in animalia_tree.nodes():
+        #     for key in data[node]:
+        #         animalia_tree.nodes[node][key] = data[node][key]
         print(animalia_tree.nodes["Q729"])
         print(animalia_tree.nodes["Q140"])
         DOUBLE_TAXONS_ANIMALIA = []
@@ -196,6 +225,20 @@ def parse_large_json_file(file_path):
         animalia_tree.nodes["Q21224524"].pop("rank")
         animalia_tree.nodes["Q343460"].pop("rank")
         animalia_tree.nodes["Q47544996"].pop("rank")
+        
+        # remove all zoa phylums
+        animalia_tree.nodes["Q2698547"].pop("rank")
+        animalia_tree.nodes["Q1407833"].pop("rank")
+        animalia_tree.nodes["Q2503841"].pop("rank")
+        animalia_tree.nodes["Q27207"].pop("rank")
+        animalia_tree.nodes["Q48918"].pop("rank")
+        for node in list(animalia_tree.successors("Q48918")):
+            animalia_tree.remove_edge("Q48918", node)
+            animalia_tree.add_edge("Q194257", node)
+        
+        animalia_tree.nodes["Q2072138"]["site_link"] = "Myxiniformes"
+        animalia_tree.nodes["Q15100334"]["site_link"] = "Myxini"
+        
         skip_taxons.append("Q822890")
         # animalia_tree.nodes["Q26214"]["rank"] = "infraphylum"
         # skip_taxons.append("Q26214")
