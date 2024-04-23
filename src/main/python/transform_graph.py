@@ -16,20 +16,6 @@ if __name__ == "__main__":
     full_animalia_tree.nodes["Q104815681"]["rank"] = "genus"
     full_animalia_tree.nodes["Q117291954"]["rank"] = "genus"
     full_animalia_tree.nodes["Q551092"]["rank"] = "subfamily"
-    full_animalia_tree.nodes["Q47966"].pop("rank")
-    full_animalia_tree.nodes["Q47969"].pop("rank")
-    full_animalia_tree.nodes["Q245695"].pop("rank")
-    full_animalia_tree.nodes["Q1085980"].pop("rank")
-    full_animalia_tree.nodes["Q1209254"].pop("rank")
-    full_animalia_tree.nodes["Q7444798"].pop("rank")
-    full_animalia_tree.nodes["Q1096960"].pop("rank")
-    full_animalia_tree.nodes["Q2910821"].pop("rank")
-    # Remove cetartiodactyle
-    full_animalia_tree.nodes["Q27850"].pop("rank")
-    # Unaccepted taxon according to WOoMS
-    full_animalia_tree.nodes["Q28432106"].pop("rank")
-    # Seems to be a subgenus in WoRMS
-    full_animalia_tree.nodes["Q21224351"].pop("rank")
     full_animalia_tree.nodes["Q161095"]["rank"] = "infraphylum"
     full_animalia_tree.nodes["Q275544"]["rank"] = "subclass"
     full_animalia_tree.nodes["Q567567"]["rank"] = "superorder"
@@ -44,35 +30,14 @@ if __name__ == "__main__":
     full_animalia_tree.nodes["Q603237"]["rank"] = "subclass"
     full_animalia_tree.nodes["Q160"]["rank"] = "infraorder"
     full_animalia_tree.nodes["Q168366"]["rank"] = "pavorder"
-    full_animalia_tree.nodes["Q2781884"].pop("rank")
-    full_animalia_tree.nodes["Q85763751"].pop("rank")
-    full_animalia_tree.nodes["Q134665"].pop("rank")
-    full_animalia_tree.nodes["Q138259"].pop("rank")
-    full_animalia_tree.nodes["Q111752876"].pop("rank")
-    full_animalia_tree.nodes["Q1633496"].pop("rank")
-    full_animalia_tree.nodes["Q160830"].pop("rank")
-    full_animalia_tree.nodes["Q2330918"].pop("rank")
-    full_animalia_tree.nodes["Q2513125"].pop("rank")
-    full_animalia_tree.nodes["Q1231177"].pop("rank")
-    full_animalia_tree.nodes["Q337777"].pop("rank")
-    # full_animalia_tree.nodes["Q1211307"].pop("rank")
-    full_animalia_tree.nodes["Q671280"].pop("rank")
-    full_animalia_tree.nodes["Q46851"].pop("rank")
-    full_animalia_tree.nodes["Q27584"].pop("rank")
-    full_animalia_tree.nodes["Q7921546"].pop("rank")
-    full_animalia_tree.nodes["Q5173"].pop("rank")
-    full_animalia_tree.nodes["Q321481"].pop("rank")
-    full_animalia_tree.nodes["Q3609046"].pop("rank")
-    # Remove Endopterygota considered as a clade and not a suborder in
-    # wikipedia
-    full_animalia_tree.nodes["Q304358"].pop("rank")
+    full_animalia_tree.nodes["Q7253962"]["rank"] = "subfamily"
+    full_animalia_tree.nodes["Q65076322"]["rank"] = "subfamily"
+    full_animalia_tree.nodes["Q3055723"]["rank"] = "infraorder"
+    full_animalia_tree.nodes["Q10492551"]["rank"] = "subgenus"
+    full_animalia_tree.nodes["Q1185781"]["rank"] = "superorder"
+    # Following what is written in wikipedia
+    full_animalia_tree.nodes["Q4286979"]["rank"] = "subgenus"
     
-    # extinct family
-    full_animalia_tree.nodes["Q20817854"].pop("rank")
-    
-    # Remove Conchifera and Aclopophora because they are not in WoRMS
-    full_animalia_tree.nodes["Q213228"].pop("rank")
-    full_animalia_tree.nodes["Q675203"].pop("rank")
     full_animalia_tree.remove_edge("Q3699922", "Q5158096")
     full_animalia_tree.add_edge("Q1072243", "Q5158096")
     full_animalia_tree.remove_edge("Q3175675", "Q55000290")
@@ -106,18 +71,6 @@ if __name__ == "__main__":
     full_animalia_tree.remove_edge("Q662226", "Q244269")
     full_animalia_tree.add_edge("Q223302", "Q244269")
     
-    full_animalia_tree.nodes["Q7253962"]["rank"] = "subfamily"
-    full_animalia_tree.nodes["Q65076322"]["rank"] = "subfamily"
-    full_animalia_tree.nodes["Q3055723"]["rank"] = "infraorder"
-    full_animalia_tree.nodes["Q10492551"]["rank"] = "subgenus"
-    full_animalia_tree.nodes["Q1185781"]["rank"] = "superorder"
-    # Following what is written in wikipedia
-    full_animalia_tree.nodes["Q4286979"]["rank"] = "subgenus"
-    # Remove holotherians
-    full_animalia_tree.nodes["Q2478975"].pop("rank")
-    # Remove eutherians
-    full_animalia_tree.nodes["Q17092469"].pop("rank")
-    
     # malacostraca are multicrustacea
     full_animalia_tree.remove_edge("Q25364", "Q182978")
     full_animalia_tree.add_edge("Q11937877", "Q182978")
@@ -125,10 +78,6 @@ if __name__ == "__main__":
     # Species under another species
     full_animalia_tree.remove_edge("Q168327", "Q328516")
     full_animalia_tree.add_edge("Q172923", "Q328516")
-    
-    # removing maxillpoda as they only contain copepoda and Flavien
-    # wanted me to
-    full_animalia_tree.nodes["Q132662"].pop("rank")
     
     def isNotSubspecies(node):
         return full_animalia_tree.nodes[node].get("rank") != "subspecies"

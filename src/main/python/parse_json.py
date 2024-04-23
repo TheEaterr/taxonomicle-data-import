@@ -169,19 +169,87 @@ def parse_large_json_file(file_path):
         # Close progress bar after completion
         progress_bar.close()
         print(mul_rank)
-        
+
         # Remove edge that shouldn't be there between a genus and its
         # subfamily
         G.remove_edge('Q123912920', 'Q2708291')
         G.remove_edge('Q124289021', 'Q124289021')
         data["Q2072138"]["site_link"] = "Myxiniformes"
         data["Q15100334"]["site_link"] = "Myxini"
+        data["Q3745848"]["site_link"] = "Platypus"
+        # delete problematic taxa (by removing their rank)
+        data["Q3748423"].pop("rank")
+        data["Q4000124"].pop("rank")
+        data["Q822890"].pop("rank")
+        data["Q3111386"].pop("rank")
+        data["Q21224524"].pop("rank")
+        data["Q343460"].pop("rank")
+        data["Q47544996"].pop("rank")
+        # According to worms, Enopla is not an accepted taxon
+        # data["Q275879"].pop("rank")
+        # And Hoplonemertea is a class
+        data["Q9293731"]["rank"] = "class"
         
+        # remove all zoa phylums
+        data["Q2698547"].pop("rank")
+        data["Q1407833"].pop("rank")
+        data["Q2503841"].pop("rank")
+        data["Q27207"].pop("rank")
+        data["Q47966"].pop("rank")
+        data["Q47969"].pop("rank")
+        data["Q245695"].pop("rank")
+        data["Q1085980"].pop("rank")
+        data["Q1209254"].pop("rank")
+        data["Q7444798"].pop("rank")
+        data["Q1096960"].pop("rank")
+        data["Q2910821"].pop("rank")
+        # Remove cetartiodactyle
+        data["Q27850"].pop("rank")
+        # Unaccepted taxon according to WOoMS
+        data["Q28432106"].pop("rank")
+        # Seems to be a subgenus in WoRMS
+        data["Q21224351"].pop("rank")
+        data["Q2781884"].pop("rank")
+        data["Q85763751"].pop("rank")
+        data["Q134665"].pop("rank")
+        data["Q138259"].pop("rank")
+        data["Q111752876"].pop("rank")
+        data["Q1633496"].pop("rank")
+        data["Q160830"].pop("rank")
+        data["Q2330918"].pop("rank")
+        data["Q2513125"].pop("rank")
+        data["Q1231177"].pop("rank")
+        data["Q337777"].pop("rank")
+        data["Q671280"].pop("rank")
+        data["Q46851"].pop("rank")
+        data["Q27584"].pop("rank")
+        data["Q7921546"].pop("rank")
+        data["Q5173"].pop("rank")
+        data["Q321481"].pop("rank")
+        data["Q3609046"].pop("rank")
+        data["Q16987281"].pop("rank")
+        # Remove Endopterygota considered as a clade and not a suborder in
+        # wikipedia
+        data["Q304358"].pop("rank")
         
+        # extinct family
+        data["Q20817854"].pop("rank")
+        
+        # Remove Conchifera and Aclopophora because they are not in WoRMS
+        data["Q213228"].pop("rank")
+        data["Q675203"].pop("rank")
+        # Remove holotherians
+        data["Q2478975"].pop("rank")
+        # Remove eutherians
+        data["Q17092469"].pop("rank")
+        # removing maxillpoda as they only contain copepoda and Flavien
+        # wanted me to
+        data["Q132662"].pop("rank")
+                
         print("Making animalia tree...")
-        
         # Remove taxa without rank or site_link
         G = removeAndReconnect(G, data=data)
+        
         # Remove taxa not connected to animalia
         connected_to_animalia = nx.dfs_tree(G, "Q729")
         for node in list(G):
@@ -209,42 +277,12 @@ def parse_large_json_file(file_path):
                         max_height_node = parent
             if max_height_node:
                 animalia_tree.add_edge(max_height_node, node)
-        
-        # delete problematic taxa (by removing their rank)
-        skip_taxons = []
-        animalia_tree.nodes["Q3748423"].pop("rank")
-        animalia_tree.nodes["Q4000124"].pop("rank")
-        animalia_tree.nodes["Q822890"].pop("rank")
-        animalia_tree.nodes["Q3111386"].pop("rank")
-        animalia_tree.nodes["Q21224524"].pop("rank")
-        animalia_tree.nodes["Q343460"].pop("rank")
-        animalia_tree.nodes["Q47544996"].pop("rank")
-        # According to worms, Enopla is not an accepted taxon
-        # animalia_tree.nodes["Q275879"].pop("rank")
-        # And Hoplonemertea is a class
-        animalia_tree.nodes["Q9293731"]["rank"] = "class"
-        
-        # remove all zoa phylums
-        animalia_tree.nodes["Q2698547"].pop("rank")
-        animalia_tree.nodes["Q1407833"].pop("rank")
-        animalia_tree.nodes["Q2503841"].pop("rank")
-        animalia_tree.nodes["Q27207"].pop("rank")
-        # animalia_tree.nodes["Q48918"].pop("rank")
-        # for node in list(animalia_tree.successors("Q48918")):
-        #     animalia_tree.remove_edge("Q48918", node)
-        #     animalia_tree.add_edge("Q194257", node)
-        
-        animalia_tree = removeAndReconnect(animalia_tree)
-        
-        skip_taxons.append("Q822890")
-        # animalia_tree.nodes["Q26214"]["rank"] = "infraphylum"
-        # skip_taxons.append("Q26214")
 
         number_problem = 0
         for taxon_info in DOUBLE_TAXONS:    
             taxon = taxon_info["id"]
             ranks = taxon_info["ranks"]
-            if animalia_tree.has_node(taxon) and taxon not in skip_taxons:
+            if animalia_tree.has_node(taxon):
                 sucessors = list(animalia_tree.successors(taxon))
                 predecessor_rank = animalia_tree.nodes[list(animalia_tree.predecessors(taxon))[0]].get("rank")
                 pred_filter_ranks = []
