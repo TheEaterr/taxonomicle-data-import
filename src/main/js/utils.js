@@ -44,3 +44,6 @@ const jsonFilename = "../../../results/animalia_tree.json";
 
 // Read JSON file
 export const jsonData = readJSONFile(jsonFilename);
+
+export const getTaxonFilter = (parent) =>
+`rank.name = "species" && image_path=true && path ~ "${parent}"`;

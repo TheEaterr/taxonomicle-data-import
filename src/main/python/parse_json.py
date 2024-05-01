@@ -173,7 +173,8 @@ def parse_large_json_file(file_path):
         # Remove edge that shouldn't be there between a genus and its
         # subfamily
         G.remove_edge('Q123912920', 'Q2708291')
-        G.remove_edge('Q124289021', 'Q124289021')
+        G.remove_edge('Q1008888', 'Q21228934')
+        # G.remove_edge('Q124289021', 'Q124289021')
         data["Q2072138"]["site_link"] = "Myxiniformes"
         data["Q15100334"]["site_link"] = "Myxini"
         data["Q3745848"]["site_link"] = "Platypus"
@@ -185,10 +186,14 @@ def parse_large_json_file(file_path):
         data["Q21224524"].pop("rank")
         data["Q343460"].pop("rank")
         data["Q47544996"].pop("rank")
+        # Salentia is just a regular clade according to wikipedia
+        data["Q1746027"].pop("rank")
         # According to worms, Enopla is not an accepted taxon
         # data["Q275879"].pop("rank")
         # And Hoplonemertea is a class
         data["Q9293731"]["rank"] = "class"
+        # wikipedia sees gekkota as a infraorder
+        data["Q1008888"]["rank"] = "infraorder"
         
         # remove all zoa phylums
         data["Q2698547"].pop("rank")
@@ -214,7 +219,7 @@ def parse_large_json_file(file_path):
         data["Q134665"].pop("rank")
         data["Q138259"].pop("rank")
         data["Q111752876"].pop("rank")
-        data["Q1633496"].pop("rank")
+        # data["Q1633496"].pop("rank")
         data["Q160830"].pop("rank")
         data["Q2330918"].pop("rank")
         data["Q2513125"].pop("rank")
@@ -224,10 +229,13 @@ def parse_large_json_file(file_path):
         data["Q46851"].pop("rank")
         data["Q27584"].pop("rank")
         data["Q7921546"].pop("rank")
-        data["Q5173"].pop("rank")
+        # data["Q5173"].pop("rank")
         data["Q321481"].pop("rank")
         data["Q3609046"].pop("rank")
         data["Q16987281"].pop("rank")
+        # REmoving Ambulacraria and Xenambulacraria 
+        data["Q2412197"].pop("rank")
+        data["Q136956"].pop("rank")
         # Remove Endopterygota considered as a clade and not a suborder in
         # wikipedia
         data["Q304358"].pop("rank")
