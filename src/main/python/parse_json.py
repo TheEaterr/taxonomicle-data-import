@@ -170,10 +170,93 @@ def parse_large_json_file(file_path):
         progress_bar.close()
         print(mul_rank)
 
-        # Remove edge that shouldn't be there between a genus and its
-        # subfamily
-        G.remove_edge('Q123912920', 'Q2708291')
-        G.remove_edge('Q1008888', 'Q21228934')
+        # Remove edge that shouldn't be there between a suborder and its
+        # infraorder
+        G.remove_edge('Q21228934', 'Q1008888')
+        
+        # Recreate some taxons that should be there (not in the data
+        # because noted as fossils)
+        data["Q1049466"] = {
+            "site_link": "Trachiniformes",
+            "scientific": "Trachinoidei",
+            "image": "Parapercis hexophtalma 1.jpg",
+            "rank": "suborder"
+        }
+        G.add_edge('Q127595', 'Q1049466')
+        data["Q2370888"] = {
+            "site_link": False,
+            "scientific": "Gadinae",
+            "rank": "subfamily"
+        }
+        G.add_edge('Q208028', 'Q2370888')
+        data["Q140260"] = {
+            "site_link": "Pegasidae",
+            "scientific": "Pegasidae",
+            "image": "Eurypegasus draconis.JPG",
+            "rank": "family"
+        }
+        G.add_edge('Q13173180', 'Q140260')
+        data["Q2447537"] = {
+            "site_link": "Trachyrincinae",
+            "scientific": "Trachyrincinae",
+            "rank": "subfamily",
+            "image": "Trachyrincus longirostris (Slender unicorn rattail).gif"
+        }
+        G.add_edge('Q766678', 'Q2447537')
+        data["Q5055196"] = {
+            "site_link": "Cavolinioidea",
+            "scientific": "Cavolinioidea",
+            "image": "Sea butterfly.jpg",
+            "rank": "superfamily"
+        }
+        G.add_edge("Q5414457", "Q5055196")
+        data["Q7188098"] = {
+            "site_link": "Phreatoicidea",
+            "scientific": "Phreatoicidea",
+            "rank": "suborder",
+            "image": "Eoph MagelaT site2.jpg"
+        }
+        G.add_edge("Q206338", "Q7188098")
+        # it's a redirect page
+        data["Q3863014"]["site_link"] = "Uramphisopus"
+        data["Q2160533"] = {
+            "site_link": "Priapulimorphida",
+            "scientific": "Priapulimorphida",
+            "rank": "order",
+            "image": "Priapulus caudatus FZ.png"
+        }
+        G.add_edge("Q5184", "Q2160533")
+        G.add_edge("Q282487", "Q130910")
+        data["Q3269358"] = {
+            "site_link": "Discinidae",
+            "scientific": "Discinidae",
+            "rank": "family",
+            "image": "Discinisca lamellosa 001.png"
+        }
+        G.add_edge("Q5281459", "Q3269358")
+        data["Q4020097"] = {
+            "site_link": "Cypridinidae",
+            "scientific": "Cypridinidae",
+            "rank": "family",
+            "image": "CypridinaMediterranea.png"
+        }
+        G.add_edge("Q11842665", "Q4020097")
+        data["Q16989943"] = {
+            "site_link": False,
+            "scientific": "Trigoniinae",
+            "rank": "subfamily",
+        }
+        G.add_edge("Q1797614", "Q16989943")
+        G.add_edge("Q16833565", "Q3389440")
+        G.add_edge("Q18395404", "Q13582529")
+        data["Q135608"] = {
+            "site_link": "Chlopsidae",
+            "scientific": "Chlopsidae",
+            "rank": "family",
+            "image": "Chlopsis bicolor.jpg"
+        }
+        G.add_edge("Q128685", "Q135608")
+        
         # G.remove_edge('Q124289021', 'Q124289021')
         data["Q2072138"]["site_link"] = "Myxiniformes"
         data["Q15100334"]["site_link"] = "Myxini"
@@ -186,14 +269,19 @@ def parse_large_json_file(file_path):
         data["Q21224524"].pop("rank")
         data["Q343460"].pop("rank")
         data["Q47544996"].pop("rank")
+        # remove fossile taxon
+        data["Q3055905"].pop("rank")
         # Salentia is just a regular clade according to wikipedia
         data["Q1746027"].pop("rank")
         # According to worms, Enopla is not an accepted taxon
         # data["Q275879"].pop("rank")
         # And Hoplonemertea is a class
         data["Q9293731"]["rank"] = "class"
-        # wikipedia sees gekkota as a infraorder
-        data["Q1008888"]["rank"] = "infraorder"
+        # add crocolymorphes as superorder
+        data["Q131863"]["rank"] = "superorder"
+        
+        # Scleroglossa just a clade
+        data["Q2944038"].pop("rank")
         
         # remove all zoa phylums
         data["Q2698547"].pop("rank")
@@ -256,13 +344,37 @@ def parse_large_json_file(file_path):
                 
         print("Making animalia tree...")
         # Remove taxa without rank or site_link
+        data["Q2382443"]["site_link"] = "Biota"
+        data["Q2382443"]["rank"] = "superkingdom"
+        print(data["Q2382443"])
         G = removeAndReconnect(G, data=data)
+        # Remove taxa not connected to animalia but also output what isn't
+        # connected to anything to find problem in the data (mostly
+        # extinct taxa)
+        connected_to_biota = nx.dfs_tree(G, "Q2382443")
+        to_check = []
+        for node in list(G):
+            if node not in connected_to_biota:
+                if data.get(node) and data[node]["site_link"] and data[node].get("rank") and data[node].get("scientific") and data[node].get("image"):
+                    to_check.append(node)
+        to_print = []
+        for node in to_check:
+            while G.has_node(node) and len(list(G.predecessors(node))):
+                node = list(G.predecessors(node))[0]
+            if data[node] and data[node]["rank"] != "species" and data[node]["rank"] != "subspecies":
+                to_print.append(node)
+        with open("results/unconnected_taxa.json", "w") as f:
+            json.dump(to_print, f, indent=2)
+        print("Number of taxa not connected to biota:", len(to_print))
         
-        # Remove taxa not connected to animalia
         connected_to_animalia = nx.dfs_tree(G, "Q729")
         for node in list(G):
             if node not in connected_to_animalia:
                 G.remove_node(node)
+        # try:
+        #     print(nx.find_cycle(G))
+        # except nx.NetworkXNoCycle:
+        #     pass
         topo_sort = list(nx.topological_sort(G))
         for i, node in enumerate(topo_sort):
             data[node]["height"] = i

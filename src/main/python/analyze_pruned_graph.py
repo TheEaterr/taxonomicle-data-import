@@ -76,7 +76,6 @@ def analyzeGraph(tree: nx.DiGraph):
     print("Out degree : ", max(out_degrees))
 
 def removeImportantDiffs(tree: nx.DiGraph):
-    to_remove = []
     nodes = list(tree)[:]
     count = 0
     for node in nodes:
